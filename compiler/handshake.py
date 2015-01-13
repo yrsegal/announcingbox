@@ -1,6 +1,7 @@
 
 
 import serial
+import time
 
 def transmitUntil(signal, waitingSignal, serialLink):
 	serialLink.write(signal)
@@ -13,6 +14,8 @@ def waitForSignal(signal, serialLink):
 
 def handshakeProtocol(timestampData, serialLink):
 	transmitUntil("S", "s", serialLink)
+	serial.write("T")
+	serial.write(time())
 	for i in timestampData:
 		serialLink.write(str(i))
 		serialLink.write("T")
