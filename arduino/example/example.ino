@@ -1,50 +1,45 @@
 // example code
 
-#include <FastLED.h>
+#include <Adafruit_NeoPixel.h>
 
-#define LED_PIN1 3
-#define LED_PIN2 4
-#define LED_PIN3 5
-#define NUM_LEDS 1
-#define NUM_STRP 3
+#define LED_PIN 3
+#define NUM_LEDS 3
 
-#define BUZZER 6
+#define BUZZER 5
+
+Adafruit_NeoPixel leds = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-
+  pinMode(BUZZER, OUTPUT);
 }
 
 void loop() {
-	for (int i = 0; i < 3; i++) {
-		for (int j=0; j < NUM_LEDS; j++) {
-      leds[colorstamps[i]][j] = led_color(colorstamps[i]);
-    }
+  for (int i = 0; i < 3; i++) {
+    leds.setPixelColor(i, led_color(i));
     tone(BUZZER, 100);
-    FastLED.show();
+    leds.show();
     delay(3000);
-    for (int j=0; j < NUM_LEDS; j++) {
-      leds[colorstamps[i]][j] = CRGB::Black;
-    }
+    leds.setPixelColor(i, led_color(-1));
     noTone(BUZZER); 
-    FastLED.show();
-	}
-	delay(10000);
+    leds.show();
+  }
+  delay(10000);
 }
 
 
-CRGB led_color(int code) {
+uint32_t led_color(int code) {
   switch (code) {
     case 0:
-      return CRGB::Red;
+      return leds.Color(255, 0, 0);
       break;
     case 1:
-      return CRGB::Green;
+      return leds.Color(0, 255, 0);
       break;
     case 2:
-      return CRGB::Blue;
+      return leds.Color(0, 0, 255);
       break;
     default:
-      return CRGB::Black;
+      return leds.Color(0, 0, 0);
       break;
   }
 }

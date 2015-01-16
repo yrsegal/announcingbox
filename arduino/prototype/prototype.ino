@@ -1,5 +1,5 @@
 #include <Time.h>
-#include <FastLED.h>
+#include <Adafruit_NeoPixel.h>
 #include <DigiCDC.h>
 
 #define TIME_MSG_LEN 11
@@ -8,19 +8,16 @@
 #define TIMESTAMP_MSG_LEN 7
 #define TIMESTAMP_HEADER 'T'
 
-#define LED_PIN1 3
-#define LED_PIN2 4
-#define LED_PIN3 5
-#define NUM_LEDS 1
-#define NUM_STRP 3
+#define LED_PIN 3
+#define NUM_LEDS 3
 
-#define BUZZER 6
+#define BUZZER 5
 
 int timestamps[256];
 int colorstamps[256];
 int lpos;
 
-CRGB leds[NUM_STRP][NUM_LEDS];
+Adafruit_NeoPixel leds = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   SerialUSB.begin();
@@ -38,34 +35,30 @@ void loop() {
   int tstamp = hmsTimeStamp();
   for (int i=0; i < lpos; i++) {
     if (tstamp == timestamps[i]) {
-      for (int j=0; j < NUM_LEDS; j++) {
-        leds[colorstamps[i]-1][j] = led_color(colorstamps[i]);
-      }
+      leds.setPixelColor(colorstamps[i]-1, led_color(colorstamps[i]));
       tone(BUZZER, 100);
-      FastLED.show();
+      leds.show();
       delay(300000);
-      for (int j=0; j < NUM_LEDS; j++) {
-        leds[colorstamps[i]-1][j] = CRGB::Black;
-      }
+      leds.setPixelColor(colorstamps[i]-1, led_color(-1));
       noTone(BUZZER); 
-      FastLED.show();
+      leds.show();
     }
   }
 }
 
-CRGB led_color(int code) {
+uint32_c led_color(int code) {
   switch (code) {
     case 1:
-      return CRGB::Red;
+      return leds.Color(255, 0, 0);
       break;
     case 2:
-      return CRGB::Green;
+      return leds.Color(0, 255, 0);
       break;
     case 3:
-      return CRGB::Blue;
+      return leds.Color(0, 0, 255);
       break;
     default:
-      return CRGB::Black;
+      return leds.Color(0, 0, 0);
       break;
   }
 }

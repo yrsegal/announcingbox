@@ -37,3 +37,6 @@ def serial_ports():
 def open_port():
     ports = serial_ports()
     return serial.Serial(ports[0])
+
+def getSerial():
+    return serial.Serial(open_port())
